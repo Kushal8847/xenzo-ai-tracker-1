@@ -10,7 +10,20 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Banknote, Eye, EyeOff, Loader2, TrendingUp, Shield, Smartphone, BarChart3, Target, Users } from "lucide-react"
+import { Separator } from "@/components/ui/separator"
+import {
+  Banknote,
+  Eye,
+  EyeOff,
+  Loader2,
+  TrendingUp,
+  Shield,
+  Smartphone,
+  BarChart3,
+  Target,
+  Zap,
+  Users,
+} from "lucide-react"
 import { AuthService } from "@/lib/auth"
 import { VerificationCodeModal } from "@/components/auth/verification-code-modal"
 
@@ -19,6 +32,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isDemoLoading, setIsDemoLoading] = useState(false)
   const [error, setError] = useState("")
   const [showVerificationModal, setShowVerificationModal] = useState(false)
   const [verificationEmail, setVerificationEmail] = useState("")
@@ -65,6 +79,25 @@ export default function LoginPage() {
     setShowVerificationModal(false)
     setVerificationEmail("")
     setIsLoading(false)
+  }
+
+  const handleDemoLogin = async () => {
+    setIsDemoLoading(true)
+    setError("")
+
+    try {
+      const success = await AuthService.demoLogin()
+
+      if (success) {
+        router.push("/")
+      } else {
+        setError("Demo login failed. Please try again.")
+      }
+    } catch (err) {
+      setError("Demo login failed. Please try again.")
+    } finally {
+      setIsDemoLoading(false)
+    }
   }
 
   const handleForgotPassword = async () => {
@@ -225,6 +258,34 @@ export default function LoginPage() {
                   </Alert>
                 )}
 
+                {/* Demo Login Button */}
+                <Button
+                  onClick={handleDemoLogin}
+                  disabled={isLoading || isDemoLoading}
+                  className="w-full h-11 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  {isDemoLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Entering Demo...
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="mr-2 h-4 w-4" />
+                      Try Demo Dashboard
+                    </>
+                  )}
+                </Button>
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <Separator className="w-full" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">Or continue with email</span>
+                  </div>
+                </div>
+
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-sm font-medium text-foreground">
@@ -237,7 +298,7 @@ export default function LoginPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      disabled={isLoading}
+                      disabled={isLoading || isDemoLoading}
                       className="h-11 border-0 bg-muted/50 focus:bg-background transition-colors"
                     />
                   </div>
@@ -254,7 +315,7 @@ export default function LoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        disabled={isLoading}
+                        disabled={isLoading || isDemoLoading}
                         className="h-11 border-0 bg-muted/50 focus:bg-background transition-colors pr-10"
                       />
                       <Button
@@ -263,7 +324,7 @@ export default function LoginPage() {
                         size="sm"
                         className="absolute right-0 top-0 h-11 px-3 hover:bg-transparent"
                         onClick={() => setShowPassword(!showPassword)}
-                        disabled={isLoading}
+                        disabled={isLoading || isDemoLoading}
                       >
                         {showPassword ? (
                           <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -280,7 +341,7 @@ export default function LoginPage() {
                       variant="link"
                       className="px-0 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                       onClick={handleForgotPassword}
-                      disabled={isLoading}
+                      disabled={isLoading || isDemoLoading}
                     >
                       Forgot password?
                     </Button>
@@ -289,7 +350,7 @@ export default function LoginPage() {
                   <Button
                     type="submit"
                     className="w-full h-11 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-                    disabled={isLoading}
+                    disabled={isLoading || isDemoLoading}
                   >
                     {isLoading ? (
                       <>

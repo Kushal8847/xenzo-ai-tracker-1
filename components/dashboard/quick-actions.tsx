@@ -2,10 +2,10 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Plus, Minus, Upload, Download, Calculator, Zap } from "lucide-react"
+import { Plus, Minus, Target, Zap } from "lucide-react"
 import { useState } from "react"
 import { AddTransactionModal } from "./add-transaction-modal"
-import { ViewReportsModal } from "./view-reports-modal"
+import { CreateBudgetModal } from "../budget/create-budget-modal"
 
 const actions = [
   {
@@ -25,34 +25,18 @@ const actions = [
     action: "expense" as const,
   },
   {
-    title: "Budget Planner",
-    description: "Plan your budget",
-    icon: Calculator,
+    title: "Create Budget",
+    description: "Set spending limits",
+    icon: Target,
     color:
       "bg-gradient-to-br from-blue-500/20 to-cyan-500/20 text-blue-400 hover:from-blue-500/30 hover:to-cyan-500/30 border-blue-500/20",
-    action: null,
-  },
-  {
-    title: "Import Bank",
-    description: "Upload statements",
-    icon: Upload,
-    color:
-      "bg-gradient-to-br from-yellow-500/20 to-orange-500/20 text-yellow-400 hover:from-yellow-500/30 hover:to-orange-500/30 border-yellow-500/20",
-    action: null,
-  },
-  {
-    title: "View Reports",
-    description: "Live financial data",
-    icon: Download,
-    color:
-      "bg-gradient-to-br from-pink-500/20 to-rose-500/20 text-pink-400 hover:from-pink-500/30 hover:to-rose-500/30 border-pink-500/20",
-    action: "reports" as const,
+    action: "budget" as const,
   },
 ]
 
 export function QuickActions() {
   const [isAddTransactionModalOpen, setIsAddTransactionModalOpen] = useState(false)
-  const [isViewReportsModalOpen, setIsViewReportsModalOpen] = useState(false)
+  const [isCreateBudgetModalOpen, setIsCreateBudgetModalOpen] = useState(false)
   const [modalDefaultType, setModalDefaultType] = useState<"income" | "expense">("income")
   const [hideExpenseOption, setHideExpenseOption] = useState(false)
   const [hideIncomeOption, setHideIncomeOption] = useState(false)
@@ -68,8 +52,8 @@ export function QuickActions() {
       setHideExpenseOption(false)
       setHideIncomeOption(true)
       setIsAddTransactionModalOpen(true)
-    } else if (action.action === "reports") {
-      setIsViewReportsModalOpen(true)
+    } else if (action.action === "budget") {
+      setIsCreateBudgetModalOpen(true)
     } else {
       // Handle other actions here
       console.log(`${action.title} clicked`)
@@ -131,7 +115,7 @@ export function QuickActions() {
         hideIncomeOption={hideIncomeOption}
       />
 
-      <ViewReportsModal isOpen={isViewReportsModalOpen} onClose={() => setIsViewReportsModalOpen(false)} />
+      <CreateBudgetModal isOpen={isCreateBudgetModalOpen} onClose={() => setIsCreateBudgetModalOpen(false)} />
     </>
   )
 }
